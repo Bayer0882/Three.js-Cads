@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - glTF loader</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+		body {
+    background-color: #000;
+    margin: 0px;
+    overflow: hidden;
+}
+
+		</style>
+	</head>
+	
+	<body>
+		
+		<script src="js/three.js"></script>
+		
+
+		
+		<script>
+
+
+// Two-sided card
+// Three.js r.49 - Updated to r.62
+
+var renderer, scene, camera, card;
+
+init();
+animate();
+
+function init() {
+
+    // renderer
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
+
+    // scene
+    scene = new THREE.Scene();
+    
+    // camera
+    camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
+    camera.position.z = 400;
+    camera.lookAt( scene.position );
+    	
+					// Rounded rectangle
+	
+		var roundedRectShape = new THREE.Shape();
+				(function roundedRect( ctx, x, y, width, height, radius ) {
+					ctx.moveTo( x, y + radius );
+					ctx.lineTo( x, y + height - radius );
+					ctx.quadraticCurveTo( x, y + height, x + radius, y + height );
+					ctx.lineTo( x + width - radius, y + height );
+					ctx.quadraticCurveTo( x + width, y + height, x + width, y + height - radius );
+					ctx.lineTo( x + width, y + radius );
+					ctx.quadraticCurveTo( x + width, y, x + width - radius, y );
+					ctx.lineTo( x + radius, y );
+					ctx.quadraticCurveTo( x, y, x, y + radius );
+					// add box 1 - grey8 texture
+							
+				} )( roundedRectShape, 0, 0, 172, 108, 6 );	
+	
+		// Rounded rectangle 2
+			var roundedRectShape2 = new THREE.Shape();
+				(function roundedRect( ctx, x, y, width, height, radius ) {
+					ctx.moveTo( x, y + radius );
+					ctx.lineTo( x, y + height - radius );
+					ctx.quadraticCurveTo( x, y + height, x + radius, y + height );
+					ctx.lineTo( x + width - radius, y + height );
+					ctx.quadraticCurveTo( x + width, y + height, x + width, y + height - radius );
+					ctx.lineTo( x + width, y + radius );
+					ctx.quadraticCurveTo( x + width, y, x + width - radius, y );
+					ctx.lineTo( x + radius, y );
+					ctx.quadraticCurveTo( x, y, x, y + radius );
+					// add box 1 - grey8 texture
+							
+				} )( roundedRectShape2, -172, 0, 172, 108, 6 );
+
+		
+	var extrudeSettings = {
+	steps: 1,
+	depth: 0.3,
+	bevelEnabled: false,
+	bevelThickness: 0,
+	bevelSize: 0,
+	bevelSegments: 0
+};
+
+var geometry1 = new THREE.ExtrudeGeometry( roundedRectShape, extrudeSettings );
+var geometry2 = new THREE.ExtrudeGeometry( roundedRectShape2, extrudeSettings );
+ geometry2.applyMatrix( new THREE.Matrix4().makeRotationY( Math.PI ) );
+   // geometry
+          
+    
+        
+    // textures
+    var textureFront = new THREE.ImageUtils.loadTexture( 'assets/red.png' );      
+    var textureBack = new THREE.ImageUtils.loadTexture( 'assets/tilbud.png' );
+
+    // material
+  
+	
+	 var material1 = new THREE.MeshBasicMaterial( { map: textureFront } );
+    var material2 = new THREE.MeshBasicMaterial( {  map: textureBack } );
+    
+    // card
+    card = new THREE.Object3D();
+    scene.add( card );
+    
+    // mesh
+    var mesh1 = new THREE.Mesh( geometry1, material1 );
+    card.add( mesh1 );
+    var mesh2 = new THREE.Mesh( geometry2, material2 );
+    card.add( mesh2 );
+    
+}
+
+function animate() {
+
+    requestAnimationFrame( animate );
+    
+    card.rotation.y += 0.01;
+    
+    renderer.render( scene, camera );
+    
+}
+		</script>
+		
+	</body>
